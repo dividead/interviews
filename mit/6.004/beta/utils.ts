@@ -12,6 +12,6 @@ const sext = (i: string): string => {
     }
 }
 
-const bit = (n: number, i: any): string => sext(i.toString()).slice(32 - n)
+const bit = (n: number, i: number): string => sext(i.toString()).slice(32 - n)
 
 export { A, print, sext, bit }

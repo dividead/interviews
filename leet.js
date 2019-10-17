@@ -30,9 +30,16 @@
 // -> минимальный элемент из каждого списка добавить в heap(K), 
 // -> потом убрать мин из кучи и добавить следующий элемент из того же списка
 // Topological Sort
-// -< DAG
+// -> DAG
 // -> reverse DFS postorder
 // -> 
+// Search
+// Knuth - Morris - Pratt
+// -> DFA (стейт машина + поток без бектрекинига)
+// Boyer - Moore
+// -> skip table (сравнение последнего символа и прыжок на длину)
+// Rabin - Karp
+// -> modulo hash function
 
 const log = console.log
 
@@ -53,8 +60,7 @@ function merge(intervals) {
 
 function subsets(a) {
     let sets = [[]]
-    while (a.length) {
-        let x = a.shift()
+    for (let x of a) {
         let y = sets.map(s => s.concat(x))
         sets.push(...y)
     }
@@ -198,4 +204,51 @@ function dfs(g) {
     return s
 }
 
-log(dfs(Graph)) // 0 1 4 2 5 3 6
+// log(dfs(Graph)) // 0 1 4 2 5 3 6
+
+function rotate(a, n) { // [1, 2, 3, 4, 'a', 'b']
+    a.reverse() // [ 'b', 'a', 4, 3, 2, 1 ]
+    let left = a.slice(0, n).reverse() // [ 'b', 'a' ] -> [ 'a', 'b'] 
+    let right = a.slice(n).reverse() // [ 4, 3, 2, 1 ] -> [ 1, 2, 3, 4 ]
+    return left.concat(right) // [ 'a', 'b', 1, 2, 3, 4 ]
+}
+
+// log(rotate([1, 2, 3, 4, 'a', 'b'], 2))
+
+function logN(n, x) {
+    return Math.log(n) / Math.log(x)
+}
+
+// log(logN(8, 2))
+
+function buyAndSell(a) {
+    let min = Infinity, profit = 0
+    for (let price of a) {
+        let t = price - min
+        profit = Math.max(profit, t)
+        min = Math.min(min, price)
+    }
+    return profit
+}
+
+// log(buyAndSell([310, 315, 275, 295, 260, 270, 290, 230, 255, 250])) // 30
+
+function polish(str) {
+    let m = new Map([
+        ['*', (a, b) => a * b],
+        ['+', (a, b) => a + b],
+        ['-', (a, b) => a - b],
+        ['/', (a, b) => a / b],
+    ])
+    let s = []
+    for (let c of str.split(',')) {
+        if (m.has(c)) {
+            s.push(m.get(c)(s.pop(), s.pop()))
+        } else {
+            s.push(parseInt(c))
+        }
+    }
+    return s[0]
+}
+
+// log(polish('2,3,+,5,*,5,-,-1,*,2,/'))

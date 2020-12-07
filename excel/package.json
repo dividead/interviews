@@ -1,0 +1,12 @@
+{
+  "name": "excel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/excel.js",
+  "scripts": {
+    "start": "node -i -e \"$(< src/excel.js)\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

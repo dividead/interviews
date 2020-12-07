@@ -1,0 +1,19 @@
+эндпоинт для загрузки файла
+он отправит документ на почту и в чаты пользовтелям
+
+POST {
+  name, // string
+  recipients, // string[]
+  url, // string
+}
+
+скачать файл по ссылке, положить в хранилище и вернуть ссылку (перевернуть строку)
+создать запись в базе { name, recipients, url, isSigned: false } -> save
+
+отправить так же на почту и в чат всем recipients (не блокируем)
+
+через пять секунд проверить, был ли подписан документ
+sending email to {subject = recipients[i]}: "you got your document {url}" // console.log
+
+через 10 секунд сообщение в чат
+sending message to {subject = recipients[i]}: "you got your document {url}" // console.log

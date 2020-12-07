@@ -1,12 +1,13 @@
 class List {
-  constructor() {
+  constructor({ verbose = false } = {}) {
     this.head = null;
+    this.v = verbose ?? false;
   }
 
   push(val) {
     const node = { val, next: this.head };
     this.head = node;
-    console.log(this.str);
+    this.v && console.log(this.pretty + ' -> null');
     return node;
   }
 
@@ -16,11 +17,11 @@ class List {
     }
     const { val, next } = this.head;
     this.head = next;
-    console.log(`${val} | ` + this.str);
+    this.v && console.log(`${val} | ` + this.pretty + ' -> null');
     return val;
   }
 
-  get str() {
+  get pretty() {
     return [...this].join(' -> ');
   }
 
@@ -35,8 +36,8 @@ class List {
 }
 
 class VM {
-  constructor() {
-    this.stack = new List();
+  constructor({ verbose = false } = {}) {
+    this.stack = new List({ verbose });
   }
   add(val) {
     switch (val) {
@@ -60,6 +61,24 @@ class VM {
     const b = this.stack.pop();
     this.stack.push(b - a);
   }
+
+  get result() {
+    return this.stack?.head?.val;
+  }
+
+  eval(stack) {
+    const vm = new VM();
+    console.log(stack.pretty);
+    const reversed = new List();
+    for (let node of stack) {
+      reversed.push(node);
+    }
+    console.log(reversed.pretty);
+    for (let cmd of reversed) {
+      vm.add(cmd);
+    }
+    this.add(vm.result);
+  }
 }
 
 // const vm = new VM();
@@ -69,10 +88,9 @@ class VM {
 // vm.add('-');
 // vm.add('+');
 
-
 const parse = str => {
-  let s = new VM();
-  let ops = new List();
+  const s = new List();
+  const ops = new List();
   let op = null;
   for (let c of str) {
     if (c === ' ') continue;
@@ -81,16 +99,22 @@ const parse = str => {
       continue;
     };
     if (c === ')') {
-      s.add(ops.pop());
+      s.push(ops.pop());
       continue;
     }
     if (!op) {
       ops.push(c);
       op = c;
     } else {
-      s.add(+c);
+      s.push(+c);
     }
   }
+
+  return s;
 };
 
-parse('(+  2 (- 5 8))'); // 2 + (5 - 8) = -1
+// const ast = parse('(+  2 (- 5 8))'); // 2 + (5 - 8) = -1
+const ast = parse('(+ 5 (+  2 (- 5 8)))');
+const vm = new VM();
+vm.eval(ast);
+console.log(vm.result);

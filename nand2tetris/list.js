@@ -66,55 +66,43 @@ class VM {
     return this.stack?.head?.val;
   }
 
-  eval(stack) {
+  parse(str) {
+    const s = new List();
+    const ops = new List();
+    let op = null;
+    for (let c of str) {
+      if (c === ' ') continue;
+      if (c === '(') {
+        op = null;
+        continue;
+      };
+      if (c === ')') {
+        s.push(ops.pop());
+        continue;
+      }
+      if (!op) {
+        ops.push(c);
+        op = c;
+      } else {
+        s.push(+c);
+      }
+    }
+
+    return s;
+  };
+
+  eval(str) {
     const vm = new VM();
-    console.log(stack.pretty);
-    const reversed = new List();
-    for (let node of stack) {
-      reversed.push(node);
-    }
-    console.log(reversed.pretty);
-    for (let cmd of reversed) {
-      vm.add(cmd);
-    }
+    const stack = vm.parse(str);
+    const reversed = new List(); // TODO: parse reversed?
+    for (let node of stack) reversed.push(node);
+    for (let cmd of reversed) vm.add(cmd);
     this.add(vm.result);
   }
 }
 
-// const vm = new VM();
-// vm.add(2);
-// vm.add(5);
-// vm.add(8);
-// vm.add('-');
-// vm.add('+');
-
-const parse = str => {
-  const s = new List();
-  const ops = new List();
-  let op = null;
-  for (let c of str) {
-    if (c === ' ') continue;
-    if (c === '(') {
-      op = null;
-      continue;
-    };
-    if (c === ')') {
-      s.push(ops.pop());
-      continue;
-    }
-    if (!op) {
-      ops.push(c);
-      op = c;
-    } else {
-      s.push(+c);
-    }
-  }
-
-  return s;
-};
-
-// const ast = parse('(+  2 (- 5 8))'); // 2 + (5 - 8) = -1
-const ast = parse('(+ 5 (+  2 (- 5 8)))');
 const vm = new VM();
-vm.eval(ast);
+vm.add(1);
+vm.eval('(+ 5 (+  2 (- 5 8)))'); // 4
+vm.add('+');
 console.log(vm.result);

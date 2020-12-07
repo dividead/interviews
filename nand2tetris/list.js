@@ -62,12 +62,35 @@ class VM {
   }
 }
 
-const vm = new VM();
+// const vm = new VM();
+// vm.add(2);
+// vm.add(5);
+// vm.add(8);
+// vm.add('-');
+// vm.add('+');
 
 
-// 2 + (5 - 8) = -1
-vm.add(2);
-vm.add(5);
-vm.add(8);
-vm.add('-');
-vm.add('+');
+const parse = str => {
+  let s = new VM();
+  let ops = new List();
+  let op = null;
+  for (let c of str) {
+    if (c === ' ') continue;
+    if (c === '(') {
+      op = null;
+      continue;
+    };
+    if (c === ')') {
+      s.add(ops.pop());
+      continue;
+    }
+    if (!op) {
+      ops.push(c);
+      op = c;
+    } else {
+      s.add(+c);
+    }
+  }
+};
+
+parse('(+  2 (- 5 8))'); // 2 + (5 - 8) = -1
